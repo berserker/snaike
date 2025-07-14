@@ -66,9 +66,9 @@ class Snake:
 
         match self.policy:
             case "CnnPolicy":
-                return spaces.Box(0.0, 1.0, shape=(3, self.blocks_x, self.blocks_y), dtype=np.float32)
+                return spaces.Box(-1.0, 1.0, shape=(3, self.blocks_x, self.blocks_y), dtype=np.float32)
             case "MlpPolicy":
-                return spaces.Box(0.0, 1.0, shape=(self.blocks_x * self.blocks_y * 3,), dtype=np.float32)
+                return spaces.Box(-1.0, 1.0, shape=(self.blocks_x * self.blocks_y * 3,), dtype=np.float32)
             
         raise ValueError(f"Unknown policy: {self.policy}")
 
@@ -201,6 +201,24 @@ class Snake:
 
         score_normalized = self.score / self.max_score
         obs[0, 4, 1] = score_normalized
+
+        # Normalized dx/dy from snake head to the food
+        dx = self.food.block.x - self.head.x
+        dy = self.food.block.y - self.head.y
+        dx_norm = dx / (self.blocks_x - 1)
+        dy_norm = dy / (self.blocks_y - 1)
+        obs[1, 0, 1] = dx_norm
+        obs[1, 1, 1] = dy_norm
+
+        # Distances from snake head to each wall
+        dist_left = self.head.x / (self.blocks_x - 1)
+        dist_right = (self.blocks_x - 1 - self.head.x) / (self.blocks_x - 1)
+        dist_top = self.head.y / (self.blocks_y - 1)
+        dist_bottom = (self.blocks_y - 1 - self.head.y) / (self.blocks_y - 1)
+        obs[1, 2, 1] = dist_left
+        obs[1, 3, 1] = dist_right
+        obs[1, 4, 1] = dist_top
+        obs[1, 5, 1] = dist_bottom
 
         # Represent the walls
 
