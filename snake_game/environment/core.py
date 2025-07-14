@@ -33,6 +33,9 @@ class Snake:
         self.living_bonus = living_bonus
         self.death_penalty = death_penalty
         self.visited_penalty = visited_penalty
+        if width < 5 or height < 5:
+            raise ValueError("width and height must be at least 5 to encode observations")
+
         self.blocks_x = width
         self.blocks_y = height
         self.food_color = food_color
