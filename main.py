@@ -107,7 +107,7 @@ def main():
     
     env = SubprocVecEnv([make_env() for _ in range(args.cores)])
 
-    model_path = f"ppo_snake-{args.policy}-{options['width']}x{options['height']}"
+    model_path = f"weights/ppo_snake-{args.policy}-{options['width']}x{options['height']}"
 
     # Default PPO hyperparameters
     """    
